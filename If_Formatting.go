@@ -4,28 +4,26 @@ import (
 	"fmt"
 )
 
-var pl = fmt.Println
-
 func main() {
-	pl("Conditional Operators in Go")
+	fmt.Println("Conditional Operators in Go")
 	// If Conditionals
 	// Conditional Operators: ==, !=, <, <=, >, >=
 	// Logical Operators: &&, ||, !
 	iAge := 8
 	if (iAge >= 1) && (iAge <= 18) {
-		pl("This is an Important Birthday!")
+		fmt.Println("This is an Important Birthday!")
 	} else if (iAge == 21) || (iAge == 50) {
-		pl("This is an Important Birthday Too!")
+		fmt.Println("This is an Important Birthday Too!")
 	} else if iAge >= 65 {
-		pl("This is an Important Birthday Too!")
+		fmt.Println("This is an Important Birthday Too!")
 	} else {
-		pl("This is not an Important Birthday")
+		fmt.Println("This is not an Important Birthday")
 	}
-	pl("!true = ", !true)
-	pl("!false = ", !false)
+	fmt.Println("!true = ", !true)
+	fmt.Println("!false = ", !false)
 
-	pl("")
-	pl("Formatted Output in Go")
+	fmt.Println("")
+	fmt.Println("Formatted Output in Go")
 	// Formatted Output
 	/*
 		%d - integer
@@ -45,5 +43,5 @@ func main() {
 	fmt.Printf("%.2f\n", 3.14159265358979323846)       // 2 decimal places
 	fmt.Printf("%9.f\n", 3.14159265358979323846)       // 9 characters wide, no decimal places
 	sp1 := fmt.Sprintf("%9.f", 3.14159265358979323846) // formatted string
-	pl("Formatted String: ", sp1)
+	fmt.Println("Formatted String: ", sp1)
 }
