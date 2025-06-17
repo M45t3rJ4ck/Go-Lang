@@ -61,57 +61,47 @@ var wordArr = [7]string{
 
 var randWord string
 var userGuess string
-var guessedLetters []string
+var guessedLetters string
 var wrongGuesses []string
 var correctLetters []string
 
 func getRandWord() string {
 	seedSecs := time.Now().Unix()
 	rand.Seed(seedSecs)
-	randWord := wordArr[rand.Intn(len(wordArr))]
+	randWord := wordArr[rand.Intn(7)]
 	correctLetters = make([]string, len(randWord))
+
 	return randWord
 }
 
 func showBoard() {
-	fmt.Println("Welcome to Hangman!")
-	fmt.Println("You have 6 incorrect guesses before you lose.")
 	fmt.Println(hmArr[len(wrongGuesses)])
 	fmt.Print("Secret word: ")
 
-	for _, letter := range correctLetters {
-		if letter == "" {
+	for _, value := range correctLetters {
+		if value == "" {
 			fmt.Print("_")
 		} else {
-			fmt.Print(letter)
+			fmt.Print(value)
 		}
 	}
 
 	fmt.Print("\nIncorrect guesses: ")
+
 	if len(wrongGuesses) > 0 {
-		for _, letter := range wrongGuesses {
-			fmt.Print(letter + " ")
+		for _, value := range wrongGuesses {
+			fmt.Print(value + " ")
 		}
 	}
 
 	fmt.Println()
 }
 
-func hasGuessedLetter(letter string) bool {
-	for _, value := range guessedLetters {
-		if value == letter {
-			return true
-		}
-	}
-	guessedLetters = append(guessedLetters, letter)
-	return false
-}
-
 func getUserLetter() string {
 	reader := bufio.NewReader(os.Stdin)
 
 	for true {
-		fmt.Print("Please enter a letter.")
+		fmt.Print("Please enter a letter: ")
 
 		userGuess, err := reader.ReadString('\n')
 
@@ -119,33 +109,35 @@ func getUserLetter() string {
 			log.Fatal(err)
 		}
 
-		userGuess = strings.TrimSpace(userGuess)
 		userGuess = strings.ToUpper(userGuess)
-	}
+		userGuess = strings.TrimSpace(userGuess)
 
-	var isLetter = regexp.MustCompile(`^[a-z]$`).MatchString
+		isLetter := regexp.MustCompile(`^[a-zA-Z]$`).MatchString
 
-	if len(userGuess) != 1 {
-		fmt.Print("Please enter only one letter.")
-	} else if !isLetter(userGuess) {
-		fmt.Println("Please enter a letter.")
-	} else if hasGuessedLetter(userGuess) {
-		fmt.Println("Please enter a letter you haven't guessed yet.")
-	} else {
-		return userGuess
+		if len(userGuess) != 1 {
+			fmt.Println("Please enter only one letter.")
+		} else if !isLetter(userGuess) {
+			fmt.Println("Please enter a letter: ")
+		} else if strings.Contains(guessedLetters, userGuess) {
+			fmt.Println("Please enter a letter you haven't guessed yet.")
+		} else {
+			return userGuess
+		}
 	}
 
 	return userGuess
 }
 
-func getAllIndices(theStr, subStr string) (indices []int) {
-	if (len(theStr) == 0) || (len(subStr) == 0) {
+func getAllIndexes(theStr, subStr string) (indices []int) {
+	if (len(subStr) == 0) || (len(theStr) == 0) {
 		return indices
 	}
 
 	offset := 0
+
 	for {
 		i := strings.Index(theStr[offset:], subStr)
+
 		if i == -1 {
 			return indices
 		}
@@ -157,7 +149,8 @@ func getAllIndices(theStr, subStr string) (indices []int) {
 }
 
 func updateCorrectLetters(letter string) {
-	indexMatches := getAllIndices(randWord, letter)
+	indexMatches := getAllIndexes(randWord, letter)
+
 	for _, value := range indexMatches {
 		correctLetters[value] = letter
 	}
@@ -172,15 +165,18 @@ func sliceHasEmptys(theSlice []string) bool {
 	return false
 }
 
-// RunHangman starts the Hangman game loop.
-func RunHangman() {
+func main() {
+	fmt.Println(getRandWord())
+	fmt.Println("Welcome to Hangman!")
+	fmt.Println("You have 6 incorrect guesses before you lose.")
+
 	for true {
 		showBoard()
 
-		guess := getUserLetter()
+		userGuess := getUserLetter()
 
-		if strings.Contains(randWord, guess) {
-			updateCorrectLetters(guess)
+		if strings.Contains(randWord, userGuess) {
+			updateCorrectLetters(userGuess)
 
 			if sliceHasEmptys(correctLetters) {
 				fmt.Println("You guessed a letter that is in the word!")
@@ -189,8 +185,8 @@ func RunHangman() {
 				break
 			}
 		} else {
-			guessedLetters = append(guessedLetters, guess)
-			wrongGuesses = append(wrongGuesses, guess)
+			guessedLetters += userGuess
+			wrongGuesses = append(wrongGuesses, userGuess)
 
 			if len(wrongGuesses) >= 6 {
 				fmt.Println("You have run out of guesses! The word was: ", randWord)
