@@ -80,7 +80,7 @@ func solvePuzzle(puzz [][]int) bool {
 		// .1) Puzzle solved
 		return true
 	} else {
-		row, cols := getEmptySpace(puzz)
+		row, cols = getEmptySpace(puzz)
 	}
 
 	for i := 1; i <= 9; i++ {
